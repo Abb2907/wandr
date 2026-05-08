@@ -9,6 +9,7 @@ import {
   Sun, Moon, Zap, Brain, Check, Globe
 } from "lucide-react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 const steps = [
   { id: 1, label: "Destination", icon: MapPin },
@@ -106,7 +107,7 @@ export default function PlannerPage() {
   const [days, setDays] = useState(7);
   const [pace, setPace] = useState("balanced");
   const [travelers, setTravelers] = useState(1);
-  const [budget, setBudget] = useState(2000);
+  const [budget, setBudget] = useState(160000);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [transport, setTransport] = useState<string[]>([]);
   const [stay, setStay] = useState<string[]>([]);
@@ -124,8 +125,115 @@ export default function PlannerPage() {
       setStep(step + 1);
     } else {
       setGenerating(true);
-      await new Promise((r) => setTimeout(r, 3000));
-      window.location.href = "/dashboard";
+      
+      try {
+        // Fetch activities from Supabase knowledge_graph
+        const { data: activities, error: kgError } = await supabase
+          .from("knowledge_graph")
+          .select("*");
+          
+        if (kgError) throw kgError;
+
+        // Helper to score activities based on user interests
+        const getInterestScore = (act: any, interests: string[]) => {
+          let score = 0;
+          const type = act.type?.toLowerCase() || "";
+          if (interests.includes("food") && (type.includes("dining") || type.includes("food"))) score += 2;
+          if (interests.includes("nature") && type.includes("nature")) score += 2;
+          if (interests.includes("culture") && type.includes("culture")) score += 2;
+          if (interests.includes("adventure") && type.includes("adventure")) score += 2;
+          if (interests.includes("wellness") && type.includes("wellness")) score += 2;
+          if (interests.includes("coffee") && type.includes("coffee")) score += 2;
+          return score;
+        };
+
+        // Simple AI logic to distribute activities into days
+        const planDays = [];
+        let activityPool = activities ? [...activities] : [];
+        
+        // Determine number of activities per day based on pace
+        const actsPerDay = pace === "relaxed" ? 3 : pace === "packed" ? 6 : 4;
+
+        for (let i = 0; i < days; i++) {
+          const dayActivities = [];
+          
+          // Sort pool by interest match, plus a small random factor to ensure variety
+          activityPool.sort((a, b) => {
+            const scoreA = getInterestScore(a, selectedInterests);
+            const scoreB = getInterestScore(b, selectedInterests);
+            return (scoreB - scoreA) + (Math.random() - 0.5);
+          });
+          
+          let currentTime = 9 * 60; // Start at 9:00 AM (in minutes)
+
+          for (let j = 0; j < actsPerDay; j++) {
+            if (activityPool.length === 0) break; // Out of activities
+            
+            const act = activityPool.pop();
+            
+            // Convert duration string like "1.5h" or "30m" to minutes approximately
+            let durationMins = 60;
+            if (act.duration.includes("h")) {
+               durationMins = parseFloat(act.duration.replace("h", "")) * 60;
+            } else if (act.duration.includes("m")) {
+               durationMins = parseInt(act.duration.replace("m", ""));
+            }
+
+            const hours = Math.floor(currentTime / 60).toString().padStart(2, '0');
+            const mins = (currentTime % 60).toString().padStart(2, '0');
+            const timeString = `${hours}:${mins}`;
+
+            dayActivities.push({
+              time: timeString,
+              name: act.name,
+              type: act.type,
+              icon: act.icon,
+              duration: act.duration,
+              cost: act.cost,
+              tag: act.tag,
+              weatherDependency: act.weather_dependency,
+              location: {
+                lat: act.location_lat,
+                lng: act.location_lng,
+                area: act.location_area
+              }
+            });
+
+            currentTime += durationMins + 30; // 30 min travel buffer
+          }
+
+          planDays.push({
+            theme: `Day ${i + 1} Explorations`,
+            activities: dayActivities
+          });
+        }
+
+        const plan = { days: planDays };
+
+        const { data, error } = await supabase
+          .from("itineraries")
+          .insert({
+            destination: selectedDest === "custom" ? customDest : selectedDest,
+            days,
+            pace,
+            travelers,
+            budget,
+            interests: selectedInterests,
+            transport,
+            stay,
+            plan
+          })
+          .select()
+          .single();
+          
+        if (error) throw error;
+        
+        await new Promise((r) => setTimeout(r, 2000));
+        window.location.href = data ? `/dashboard?id=${data.id}` : "/dashboard";
+      } catch (error) {
+        console.error("Error creating itinerary:", error);
+        setGenerating(false);
+      }
     }
   };
 
@@ -362,31 +470,31 @@ export default function PlannerPage() {
                   <div className="glass-card rounded-2xl p-6 border border-white/8 space-y-4">
                     <div className="flex items-end gap-2">
                       <span className="text-5xl font-bold text-white" style={{ fontFamily: "Syne, sans-serif" }}>
-                        ${budget.toLocaleString()}
+                        ₹{budget.toLocaleString()}
                       </span>
                       <span className="text-cosmos-400 text-sm mb-2">per person</span>
                     </div>
                     <input
-                      type="range" min={200} max={20000} step={100} value={budget}
+                      type="range" min={16000} max={1600000} step={8000} value={budget}
                       onChange={(e) => setBudget(Number(e.target.value))}
                       className="w-full accent-aurora-400 cursor-pointer"
                     />
                     <div className="flex justify-between text-xs text-cosmos-500">
-                      <span>$200 Budget</span>
-                      <span>$5k Mid-range</span>
-                      <span>$20k Luxury</span>
+                      <span>₹16k Budget</span>
+                      <span>₹400k Mid-range</span>
+                      <span>₹1.6M Luxury</span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
                     {[
-                      { label: "Backpacker", range: "$200–$800", emoji: "🎒" },
-                      { label: "Mid-range", range: "$800–$5,000", emoji: "🌍" },
-                      { label: "Luxury", range: "$5,000+", emoji: "✨" },
+                      { label: "Backpacker", range: "₹16k–₹64k", emoji: "🎒" },
+                      { label: "Mid-range", range: "₹64k–₹400k", emoji: "🌍" },
+                      { label: "Luxury", range: "₹400k+", emoji: "✨" },
                     ].map((tier) => (
                       <button
                         key={tier.label}
-                        onClick={() => setBudget(tier.label === "Backpacker" ? 500 : tier.label === "Mid-range" ? 2000 : 10000)}
+                        onClick={() => setBudget(tier.label === "Backpacker" ? 40000 : tier.label === "Mid-range" ? 160000 : 800000)}
                         className="p-4 rounded-xl border border-white/6 glass hover:border-aurora-400/30 text-center transition-all"
                       >
                         <span className="text-xl">{tier.emoji}</span>
@@ -498,7 +606,7 @@ export default function PlannerPage() {
                       <p className="text-sm font-medium text-white">Ready to generate your itinerary</p>
                       <p className="text-xs text-cosmos-400 mt-1 leading-relaxed">
                         8 AI agents will collaborate to build a personalized{" "}
-                        {days}-day plan for {travelers} traveler{travelers > 1 ? "s" : ""} with a $
+                        {days}-day plan for {travelers} traveler{travelers > 1 ? "s" : ""} with a ₹
                         {budget.toLocaleString()} budget.
                       </p>
                     </div>

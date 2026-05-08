@@ -6,7 +6,7 @@ npm-debug.log
 .git
 .gitignore
 README.md
-.env
-.env.*
+# .env
+# .env.*
 .eslintrc*
-eslint.config.*
+# eslint.config.*
