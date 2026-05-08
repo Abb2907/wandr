@@ -12,6 +12,7 @@ import {
   Home, LogOut, ArrowRight, CloudRain, RefreshCcw, CheckCircle2, ArrowRightLeft, Loader2
 } from "lucide-react";
 import Link from "next/link";
+import GoogleMaps from "@/components/GoogleMaps";
 
 const staticDays = [
   {
@@ -371,10 +372,10 @@ function DashboardContent() {
             </div>
             <button
               onClick={() => setChatOpen(!chatOpen)}
+              aria-label="Ask Wandr AI concierge"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-aurora-400 text-cosmos-950 text-xs font-semibold hover:bg-aurora-300 transition-colors"
             >
               <MessageSquare className="w-3.5 h-3.5" />
-              Ask Wandr
             </button>
           </div>
         </div>
@@ -634,6 +635,19 @@ function DashboardContent() {
                 </div>
               </div>
 
+              {/* Map View */}
+              <div className="glass-card rounded-2xl border border-white/8 overflow-hidden h-[300px]">
+                <div className="px-5 py-3 border-b border-white/5 flex items-center justify-between">
+                  <p className="text-sm font-semibold text-white">Live Map Tracker</p>
+                  <Map className="w-4 h-4 text-aurora-400" />
+                </div>
+                <GoogleMaps 
+                  destination={itinerary?.destination} 
+                  activities={dayData?.activities} 
+                  className="h-[calc(300px-45px)] border-none rounded-none" 
+                />
+              </div>
+
               {/* Quick actions */}
               <div className="glass-card rounded-2xl border border-white/8 p-5 space-y-3">
                 <p className="text-sm font-semibold text-white">Quick Actions</p>
@@ -681,7 +695,11 @@ function DashboardContent() {
                 <div className="status-dot" />
                 <p className="text-sm font-semibold text-white">Wandr AI Concierge</p>
               </div>
-              <button onClick={() => setChatOpen(false)} className="text-cosmos-400 hover:text-white transition-colors">
+              <button 
+                onClick={() => setChatOpen(false)} 
+                className="text-cosmos-400 hover:text-white transition-colors"
+                aria-label="Close chat"
+              >
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -711,6 +729,7 @@ function DashboardContent() {
                 />
                 <button
                   onClick={sendChat}
+                  aria-label="Send message"
                   className="px-3 py-2.5 rounded-xl bg-aurora-400 text-cosmos-950 font-semibold text-sm hover:bg-aurora-300 transition-colors"
                 >
                   <ArrowRight className="w-4 h-4" />
