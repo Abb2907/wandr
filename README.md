@@ -1,36 +1,125 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌍 Wandr — AI Travel Planning & Experience Engine
 
-## Getting Started
+> *Your intelligent travel companion. Plan smarter, explore deeper, wander further.*
 
-First, run the development server:
+Wandr is a premium, AI-powered travel planning ecosystem that transforms the way people discover destinations, craft itineraries, and experience the world. Built with a multi-agent AI concierge at its core, Wandr delivers deeply personalized travel plans — from budget backpackers to luxury jet-setters.
+
+---
+
+## ✨ Features
+
+- **AI Trip Planner** — A multi-step wizard that generates context-aware itineraries tailored to your travel style, budget, and pace
+- **Multi-Agent AI Concierge** — Specialized AI agents (Local Expert, Budget Analyst, Safety Monitor, Cultural Guide) collaborate to craft the perfect plan
+- **Live Dashboard** — Real-time itinerary management with dynamic alerts, weather overlays, and budget tracking
+- **Smart Budget Tracker** — Visual breakdowns of spend across flights, hotels, food, and experiences
+- **Persona Matching** — Profiles for Solo Adventurers, Couples, Families, Digital Nomads, and Luxury Travelers
+- **Glassmorphism UI** — Premium, dark-mode-first interface with fluid micro-animations powered by Framer Motion
+
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS v4 |
+| Animations | Framer Motion |
+| UI Primitives | Radix UI |
+| Icons | Lucide React |
+| Runtime | Node.js 20 |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 20+
+- npm
+
+### Local Development
 
 ```bash
+# Install dependencies
+npm install
+
+# Start dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🐳 Docker
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Build and run locally with Docker:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+docker build -t wandr .
+docker run -p 8080:8080 wandr
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ☁️ Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Wandr is deployed on **Google Cloud Run** and publicly accessible at:
+
+🔗 **https://wandr-307184166110.us-central1.run.app**
+
+| Property | Value |
+|----------|-------|
+| Project | `luminous-night-478402-r7` |
+| Service | `wandr` |
+| Region | `us-central1` |
+| Platform | Google Cloud Run (managed) |
+
+To redeploy:
+
+```bash
+gcloud run deploy wandr \
+  --source . \
+  --project luminous-night-478402-r7 \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --port 8080
+```
+
+---
+
+## 📁 Project Structure
+
+```
+src/
+├── app/
+│   ├── page.tsx          # Landing page
+│   ├── layout.tsx        # Root layout
+│   ├── dashboard/        # Live travel dashboard
+│   └── planner/          # AI trip planner wizard
+└── components/
+    ├── Navbar.tsx
+    ├── Footer.tsx
+    └── sections/         # Landing page sections
+        ├── HeroSection.tsx
+        ├── FeaturesSection.tsx
+        ├── AgentsSection.tsx
+        ├── HowItWorksSection.tsx
+        ├── PersonasSection.tsx
+        ├── PricingSection.tsx
+        ├── SocialProofSection.tsx
+        └── CTASection.tsx
+```
+
+---
+
+## 📄 License
+
+MIT © 2026 Wandr
