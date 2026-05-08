@@ -1,26 +1,275 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-cosmos-950: oklch(8% 0.02 260);
+  --color-cosmos-900: oklch(11% 0.025 260);
+  --color-cosmos-800: oklch(16% 0.03 258);
+  --color-cosmos-700: oklch(22% 0.035 256);
+  --color-cosmos-600: oklch(30% 0.04 255);
+  --color-cosmos-500: oklch(40% 0.045 254);
+  --color-cosmos-400: oklch(52% 0.05 253);
+  --color-cosmos-300: oklch(65% 0.045 252);
+  --color-cosmos-200: oklch(80% 0.035 250);
+  --color-cosmos-100: oklch(92% 0.02 248);
+  --color-cosmos-50: oklch(97% 0.01 246);
+
+  --color-aurora-500: oklch(62% 0.22 160);
+  --color-aurora-400: oklch(72% 0.2 158);
+  --color-aurora-300: oklch(80% 0.18 155);
+  --color-aurora-600: oklch(52% 0.22 162);
+
+  --color-ember-500: oklch(68% 0.2 45);
+  --color-ember-400: oklch(78% 0.18 43);
+  --color-ember-300: oklch(86% 0.16 40);
+
+  --color-sapphire-500: oklch(58% 0.2 250);
+  --color-sapphire-400: oklch(68% 0.19 248);
+  --color-sapphire-300: oklch(76% 0.18 246);
+
+  --color-rose-ai: oklch(65% 0.22 355);
+
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: oklch(8% 0.02 260);
+    color: oklch(92% 0.02 248);
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Syne', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background: oklch(62% 0.22 160 / 0.3);
+    color: oklch(95% 0.01 160);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: oklch(11% 0.025 260);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: oklch(30% 0.04 255);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(62% 0.22 160);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Glassmorphism */
+  .glass {
+    background: oklch(16% 0.03 258 / 0.6);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid oklch(100% 0 0 / 0.06);
+  }
+
+  .glass-strong {
+    background: oklch(16% 0.03 258 / 0.85);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 1px solid oklch(100% 0 0 / 0.08);
+  }
+
+  .glass-card {
+    background: oklch(16% 0.03 258 / 0.5);
+    backdrop-filter: blur(20px);
+    border: 1px solid oklch(100% 0 0 / 0.07);
+    transition: all 0.3s ease;
+  }
+  .glass-card:hover {
+    background: oklch(22% 0.035 256 / 0.7);
+    border-color: oklch(62% 0.22 160 / 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px oklch(0% 0 0 / 0.3), 0 0 0 1px oklch(62% 0.22 160 / 0.1);
+  }
+
+  /* Glow effects */
+  .glow-aurora {
+    box-shadow: 0 0 30px oklch(62% 0.22 160 / 0.3), 0 0 60px oklch(62% 0.22 160 / 0.15);
+  }
+  .glow-ember {
+    box-shadow: 0 0 30px oklch(68% 0.2 45 / 0.3), 0 0 60px oklch(68% 0.2 45 / 0.15);
+  }
+  .glow-sapphire {
+    box-shadow: 0 0 30px oklch(58% 0.2 250 / 0.3), 0 0 60px oklch(58% 0.2 250 / 0.15);
+  }
+  .text-glow-aurora {
+    text-shadow: 0 0 20px oklch(62% 0.22 160 / 0.5);
+  }
+
+  /* Gradient text */
+  .gradient-aurora {
+    background: linear-gradient(135deg, oklch(80% 0.18 155), oklch(62% 0.22 160));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .gradient-sunset {
+    background: linear-gradient(135deg, oklch(78% 0.18 43), oklch(65% 0.22 355));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .gradient-ocean {
+    background: linear-gradient(135deg, oklch(68% 0.19 248), oklch(62% 0.22 160));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Noise texture overlay */
+  .noise::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Animation utilities */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  .animate-float-delay {
+    animation: float 6s ease-in-out 2s infinite;
+  }
+  .animate-pulse-slow {
+    animation: pulse 4s ease-in-out infinite;
+  }
+  .animate-shimmer {
+    animation: shimmer 2.5s linear infinite;
+    background: linear-gradient(90deg, transparent 0%, oklch(100% 0 0 / 0.05) 50%, transparent 100%);
+    background-size: 200% 100%;
+  }
+  .animate-scan {
+    animation: scan 3s linear infinite;
+  }
+
+  /* Dot grid background */
+  .dot-grid {
+    background-image: radial-gradient(circle, oklch(100% 0 0 / 0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Orbit rings */
+  .orbit-ring {
+    border: 1px solid oklch(62% 0.22 160 / 0.15);
+    border-radius: 9999px;
+    animation: orbit 20s linear infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-12px) rotate(1deg); }
+  66% { transform: translateY(-6px) rotate(-0.5deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes scan {
+  0% { top: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+/* Marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+/* Status dot */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: oklch(62% 0.22 160);
+  box-shadow: 0 0 0 0 oklch(62% 0.22 160 / 0.4);
+  animation: status-pulse 2s ease-out infinite;
+}
+@keyframes status-pulse {
+  0% { box-shadow: 0 0 0 0 oklch(62% 0.22 160 / 0.4); }
+  70% { box-shadow: 0 0 0 8px oklch(62% 0.22 160 / 0); }
+  100% { box-shadow: 0 0 0 0 oklch(62% 0.22 160 / 0); }
+}
+
+/* Timeline connector */
+.timeline-line {
+  background: linear-gradient(to bottom, oklch(62% 0.22 160), oklch(58% 0.2 250), oklch(68% 0.2 45));
+}
+
+/* Budget bar */
+.budget-bar {
+  background: linear-gradient(90deg, oklch(62% 0.22 160), oklch(68% 0.19 248));
+  border-radius: 9999px;
+  transition: width 1s ease-out;
+}
+
+/* Map card */
+.map-placeholder {
+  background: radial-gradient(ellipse at center, oklch(16% 0.03 258) 0%, oklch(11% 0.025 260) 70%);
+  background-image: 
+    radial-gradient(circle at 25% 35%, oklch(62% 0.22 160 / 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 75% 65%, oklch(68% 0.2 45 / 0.06) 0%, transparent 50%),
+    linear-gradient(oklch(100% 0 0 / 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(100% 0 0 / 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
 }
